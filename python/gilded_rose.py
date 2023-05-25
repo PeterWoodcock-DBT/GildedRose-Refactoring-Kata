@@ -12,18 +12,19 @@ class GildedRose(object):
         for item in self.items:
             if item.name == "Sulfuras, Hand of Ragnaros":
                 continue
+
+            item.sell_in -= 1
+
             if item.name == "Aged Brie":
                 quality_change = 1
             if item.name == "Backstage passes to a TAFKAL80ETC concert":
-                if item.sell_in <= 10:
-                    quality_change = 2
-                if item.sell_in <= 5:
-                    quality_change = 3
-                if item.sell_in <= 0:
-                    multiplier = -1 * item.quality
-
-            item.sell_in -= 1
-            if item.sell_in < 0 and item.name != "Backstage passes to a TAFKAL80ETC concert":
+                if item.sell_in < 10:
+                    multiplier = -2
+                if item.sell_in < 5:
+                    multiplier = -3
+                if item.sell_in < 0:
+                    multiplier = item.quality
+            elif item.sell_in < 0:
                 multiplier = 2
 
             item.quality += quality_change * multiplier
