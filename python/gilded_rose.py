@@ -6,10 +6,13 @@ class GildedRose(object):
         self.items = items
 
     def update_quality(self):
-        quality_change = -1
-        multiplier = 1
-
         for item in self.items:
+            quality_change = -1
+            degradation_multiplier = 1
+
+            if type(item) == ConjuredItem:
+                degradation_multiplier *= 2
+
             if item.name == "Sulfuras, Hand of Ragnaros":
                 continue
 
@@ -19,15 +22,15 @@ class GildedRose(object):
                 quality_change = 1
             if item.name == "Backstage passes to a TAFKAL80ETC concert":
                 if item.sell_in < 10:
-                    multiplier = -2
+                    quality_change = 2
                 if item.sell_in < 5:
-                    multiplier = -3
+                    quality_change = 3
                 if item.sell_in < 0:
-                    multiplier = item.quality
+                    quality_change = -item.quality
             elif item.sell_in < 0:
-                multiplier = 2
+                degradation_multiplier *= 2
 
-            item.quality += quality_change * multiplier
+            item.quality += quality_change * degradation_multiplier
 
             if item.quality < 0:
                 item.quality = 0
@@ -48,4 +51,5 @@ class Item:
 
 class ConjuredItem(Item):
     pass
+
 

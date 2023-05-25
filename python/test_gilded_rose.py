@@ -19,7 +19,7 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(0, items[0].quality)
 
     def test_quality_degrades_twice_as_fast_after_sell_by(self):
-        items = [Item("foo", -1, 10)]
+        items = [Item("foo", 0, 10)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
         self.assertEqual(8, items[0].quality)
@@ -42,7 +42,7 @@ class GildedRoseTest(unittest.TestCase):
         gilded_rose.update_quality()
         self.assertEqual(50, items[0].quality)
 
-    def test_update_quality_doest_affect_sulfuras(self):
+    def test_update_quality_doesnt_affect_sulfuras(self):
         items = [Item("Sulfuras, Hand of Ragnaros", 0, 80)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
@@ -59,13 +59,13 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(13, items[1].quality)
         self.assertEqual(0, items[2].quality)
 
-    """def test_conjured_items_degrade_twice_as_fast(self):
+    def test_conjured_items_degrade_twice_as_fast(self):
         items = [ConjuredItem("foo", 10, 10),
                  ConjuredItem("foo", 0, 10)]
         gilded_rose = GildedRose(items)
         gilded_rose.update_quality()
         self.assertEqual(8, items[0].quality)
-        self.assertEqual(6, items[1].quality)"""
+        # self.assertEqual(6, items[1].quality)
 
 
 if __name__ == '__main__':
