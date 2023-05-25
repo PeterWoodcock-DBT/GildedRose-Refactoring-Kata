@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from gilded_rose import Item, GildedRose
+from gilded_rose import Item, ConjuredItem, GildedRose
 
 
 class GildedRoseTest(unittest.TestCase):
@@ -17,7 +17,6 @@ class GildedRoseTest(unittest.TestCase):
         gilded_rose.update_quality()
         self.assertEqual(0, items[0].sell_in)
         self.assertEqual(0, items[0].quality)
-
 
     def test_quality_degrades_twice_as_fast_after_sell_by(self):
         items = [Item("foo", -1, 10)]
@@ -59,6 +58,14 @@ class GildedRoseTest(unittest.TestCase):
         self.assertEqual(12, items[0].quality)
         self.assertEqual(13, items[1].quality)
         self.assertEqual(0, items[2].quality)
+
+    """def test_conjured_items_degrade_twice_as_fast(self):
+        items = [ConjuredItem("foo", 10, 10),
+                 ConjuredItem("foo", 0, 10)]
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        self.assertEqual(8, items[0].quality)
+        self.assertEqual(6, items[1].quality)"""
 
 
 if __name__ == '__main__':

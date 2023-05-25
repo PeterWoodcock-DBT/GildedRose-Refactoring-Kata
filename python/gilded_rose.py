@@ -6,34 +6,32 @@ class GildedRose(object):
         self.items = items
 
     def update_quality(self):
+        quality_change = -1
+        multiplier = 1
+
         for item in self.items:
-            if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert":
-                if item.quality > 0:
-                    if item.name != "Sulfuras, Hand of Ragnaros":
-                        item.quality = item.quality - 1
-            else:
-                if item.quality < 50:
-                    item.quality = item.quality + 1
-                    if item.name == "Backstage passes to a TAFKAL80ETC concert":
-                        if item.sell_in < 11:
-                            if item.quality < 50:
-                                item.quality = item.quality + 1
-                        if item.sell_in < 6:
-                            if item.quality < 50:
-                                item.quality = item.quality + 1
-            if item.name != "Sulfuras, Hand of Ragnaros":
-                item.sell_in = item.sell_in - 1
-            if item.sell_in < 0:
-                if item.name != "Aged Brie":
-                    if item.name != "Backstage passes to a TAFKAL80ETC concert":
-                        if item.quality > 0:
-                            if item.name != "Sulfuras, Hand of Ragnaros":
-                                item.quality = item.quality - 1
-                    else:
-                        item.quality = item.quality - item.quality
-                else:
-                    if item.quality < 50:
-                        item.quality = item.quality + 1
+            if item.name == "Sulfuras, Hand of Ragnaros":
+                continue
+            if item.name == "Aged Brie":
+                quality_change = 1
+            if item.name == "Backstage passes to a TAFKAL80ETC concert":
+                if item.sell_in <= 10:
+                    quality_change = 2
+                if item.sell_in <= 5:
+                    quality_change = 3
+                if item.sell_in <= 0:
+                    multiplier = -1 * item.quality
+
+            item.sell_in -= 1
+            if item.sell_in < 0 and item.name != "Backstage passes to a TAFKAL80ETC concert":
+                multiplier = 2
+
+            item.quality += quality_change * multiplier
+
+            if item.quality < 0:
+                item.quality = 0
+            if item.quality > 50:
+                item.quality = 50
 
 
 class Item:
@@ -45,3 +43,8 @@ class Item:
 
     def __repr__(self):
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
+
+
+class ConjuredItem(Item):
+    pass
+
