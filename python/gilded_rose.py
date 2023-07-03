@@ -1,45 +1,86 @@
 # -*- coding: utf-8 -*-
 
+import re
+
+
 class GildedRose(object):
 
     def __init__(self, items):
         self.items = items
 
     def update_quality(self):
+        updater = Updater()
         for item in self.items:
-            quality_change = -1
-            degradation_multiplier = 1
+            if re.findall("^Conjured ", item.name):
+                updater.conjured(item)
 
-            if type(item) == ConjuredItem:
-                degradation_multiplier *= 2
+            elif item.name == "Sulfuras, Hand of Ragnaros":
+                updater.sulfuras(item)
 
-            if item.name == "Sulfuras, Hand of Ragnaros":
-                continue
+            elif item.name == "Aged Brie":
+                updater.aged_brie(item)
 
-            item.sell_in -= 1
+            elif item.name == "Backstage passes to a TAFKAL80ETC concert":
+                updater.backstage_passes(item)
 
-            if item.name == "Aged Brie":
-                quality_change = 1
-            if item.name == "Backstage passes to a TAFKAL80ETC concert":
-                if item.sell_in < 10:
-                    quality_change = 2
-                if item.sell_in < 5:
-                    quality_change = 3
-                if item.sell_in < 0:
-                    quality_change = -item.quality
-            elif item.sell_in < 0:
-                degradation_multiplier *= 2
+            else:
+                updater.normal_item(item)
 
-            item.quality += quality_change * degradation_multiplier
 
-            if item.quality < 0:
-                item.quality = 0
-            if item.quality > 50:
-                item.quality = 50
+class Updater(object):
+    MIN_QUALITY = 0
+    MAX_QUALITY = 50
+
+    def normal_item(self, item):
+        if item.sell_in > 0:
+            depreciation = -1
+        else:
+            depreciation = -2
+        item.quality = max((item.quality + depreciation), self.MIN_QUALITY)
+        item.sell_in += -1
+
+    def aged_brie(self, item):
+        if item.sell_in > 0:
+            appreciation = 1
+        else:
+            appreciation = 2
+        item.quality = min((item.quality + appreciation), self.MAX_QUALITY)
+        item.sell_in += -1
+
+    def sulfuras(self, item):
+        pass
+
+    def backstage_passes(self, item):
+
+        def get_quality(item, appreciation):
+            item.quality = min(item.quality + appreciation, self.MAX_QUALITY)
+
+        if item.sell_in > 10:
+            appreciation = 1
+            get_quality(item, appreciation)
+        elif item.sell_in > 5:
+            appreciation = 2
+            get_quality(item, appreciation)
+        elif item.sell_in > 0:
+            appreciation = 3
+            get_quality(item, appreciation)
+        else:
+            item.quality = 0
+        item.sell_in += -1
+
+    def conjured(self, item):
+        if item.sell_in > 0:
+            depreciation = -2
+        else:
+            depreciation = -4
+
+        item.quality = max((item.quality + depreciation), self.MIN_QUALITY)
+        item.sell_in += -1
 
 
 class Item:
     """Do not alter the Item class"""
+
     def __init__(self, name, sell_in, quality):
         self.name = name
         self.sell_in = sell_in
@@ -47,9 +88,3 @@ class Item:
 
     def __repr__(self):
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
-
-
-class ConjuredItem(Item):
-    pass
-
-
